@@ -108,7 +108,7 @@ export default {
       this.$store.dispatch("SET_SELECT_TEAM",data).then(()=>{
         this.$router.replace("/teammain");
       });
-    }
+    },
   },
 };
 </script>
