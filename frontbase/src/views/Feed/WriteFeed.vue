@@ -1,8 +1,9 @@
 <template>
   <div class="wrap">
     <div class="challenge_wrap">
-      <label for="challenge">챌린지 선택</label>
-      <select id="challenge" v-model="challenge">
+      <label for="challenge">일상글|챌린지</label>
+      <select id="challenge" v-model="challenge" class="dailyFeed">
+        <option>일상글</option>
         <option
           v-for="(challenge, idx) in team_challenges"
           :key="idx"
@@ -40,8 +41,7 @@ export default {
   data: () => {
     return {
       contents: "",
-      // challenge: Number(),
-      challenge: "",
+      challenge: Number(),
       file: null
     };
   },
@@ -51,33 +51,23 @@ export default {
   created() {
     this.$store.dispatch("GET_TEAMCHALLENGE_INFO", this.memberInfo.memberId);
     this.$store.dispatch("GET_MY_TEAM_INFO", this.memberInfo.memberId);
-    // console.log(this.team_challenges);
-    // console.log(this.memberInfo);
-    // console.log(this.myTeamList);
   },
   methods: {
     write() {
-      // this.challenge = -1;
-
+      var daily = document.querySelector(".dailyFeed");
       const formData = new FormData();
-      formData.append("teamchallengeId", this.challenge.text.teamChallengeId);
+
+      if (daily.options[daily.selectedIndex].value == "일상글") {
+        formData.append("teamchallengeId", 0);
+      } else {
+        formData.append("teamchallengeId", this.challenge.text.teamChallengeId);
+      }
       formData.append("memberId", this.memberInfo.memberId);
       formData.append("teamId", this.myTeamList[0].text.teamId);
-      formData.append(
-        "teamName",
-        JSON.stringify(this.challenge.text.team.name)
-      );
+      formData.append("teamName", JSON.stringify(this.myTeamList[0].text.name));
       formData.append("contents", JSON.stringify(this.contents));
       formData.append("writer", JSON.stringify(this.memberInfo.name));
       formData.append("image", document.getElementById("chooseFile").files[0]);
-
-      console.log(this.challenge.text.teamChallengeId);
-      console.log(this.memberInfo.memberId);
-      console.log(this.myTeamList[0].text.teamId);
-      console.log(this.challenge.text.team.name);
-      console.log(JSON.stringify(this.contents));
-      console.log(JSON.stringify(this.memberInfo.name));
-      console.log(document.getElementById("chooseFile").files[0]);
 
       const instance = createInstance();
       instance
@@ -95,11 +85,10 @@ export default {
           }
         })
         .catch(() => {
-          alert("에러발생!.");
+          alert("피드작성 에러발생!");
         });
     },
     loadf() {
-      // console.log("되는가?");
       var file = document.getElementById("chooseFile");
 
       let preview = document.querySelector(".preview");
@@ -112,16 +101,6 @@ export default {
       preview.style.maxHeight = "500px";
     }
   }
-  // created() {
-  //   instance
-  //     .get("challenge/list")
-  //     .then(({ data }) => {
-  //       this.challenges = data;
-  //     })
-  //     .catch(() => {
-  //       alert("챌린지 받아오기 실패");
-  //     });
-  // }
 };
 </script>
 <style scoped>
