@@ -36,6 +36,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { createInstance } from "@/api/teamindex.js";
+import "../../components/css/feed/writeFeed.scss";
 
 export default {
   data: () => {
@@ -103,44 +104,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-.wrap {
-  border: 1px solid black;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 1em;
-}
-textarea,
-select {
-  border: 1px solid black;
-}
-.img_wrap {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.preview {
-  display: block;
-  margin: 20px 0;
-}
-.challenge_wrap {
-  margin: 15px 0;
-}
-.challenge_wrap label {
-  margin-right: 10px;
-}
-#chooseFile {
-  display: none;
-}
-.fileBtn {
-  background: lavender;
-  border-radius: 15px;
-  padding: 0.5em 1em;
-}
-.fileBtn:hover {
-  cursor: pointer;
-}
-</style>
