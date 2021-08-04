@@ -3,9 +3,8 @@
     <div class="profile"></div>
     <div>
       <div class="content">
-        <div>멤버이름</div>
-        <div class="contents">댓글내용</div>
-        <!-- <div>{{ comment[0].contents }}</div> -->
+        <div>{{ comment.member.name }}</div>
+        <div>{{ comment.contents }}</div>
       </div>
       <button @click="writeRe" class="showWriteBtn">답글달기</button>
       <button @click="showRe" class="showReBtn">대댓글보기</button>
@@ -34,9 +33,6 @@ export default {
   },
   components: {
     InnerItem
-  },
-  created() {
-    console.log(comment);
   },
   methods: {
     writeRe() {

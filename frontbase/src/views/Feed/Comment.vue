@@ -2,7 +2,11 @@
   <div class="wrap">
     <h3>댓글창</h3>
     <div class="comments">
-      <comment-item v-for="(comment, idx) in comments" :key="idx" :comment="comment">
+      <comment-item
+        v-for="(comment, idx) in comments"
+        :key="idx"
+        :comment="comment"
+      ></comment-item>
     </div>
     <div class="writeC">
       <label for="writeC">댓글작성</label>
@@ -45,7 +49,9 @@ export default {
         .post("/comment/", JSON.stringify(body))
         .then(response => {
           if (response.data.data === "success") {
+            // document.querySelector("#writeC").value = "";
             alert("댓글 등록 완료");
+            this.$store.dispatch("GET_COMMENTS", this.feedid);
           } else {
             alert("댓글 등록 실패");
           }
