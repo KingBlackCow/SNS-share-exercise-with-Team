@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="challenge_wrap">
-      <label for="challenge">일상글|챌린지</label>
+      <label for="challenge" class="feedType">▼일상글|챌린지▼</label>
       <select id="challenge" v-model="challenge" class="dailyFeed">
         <option>일상글</option>
         <option
@@ -15,7 +15,7 @@
     </div>
     <div class="img_wrap">
       <label for="chooseFile" class="fileBtn">
-        사진올리기
+        👉 UPLOAD IMAGE 👈
       </label>
       <input
         type="file"
@@ -27,7 +27,7 @@
       <img src="" class="preview" />
     </div>
     <div>
-      <textarea v-model="contents"></textarea>
+      <textarea v-model="contents" class="contents"></textarea>
     </div>
     <v-btn @click="write">등록</v-btn>
   </div>
