@@ -6,7 +6,12 @@
     </v-toolbar-title>
     <v-layout justify-center align-center wrap class="mt-4 pt-2">
       <v-card   elevation="0">
-        <v-chip :color="nameColor" dark>{{memberInfo.name}}<v-btn @click="move()" icon elevation="0"><v-icon>settings</v-icon></v-btn></v-chip>
+        <v-chip :color="nameColor" dark>{{memberInfo.name}}
+          <v-btn @click="move()" icon elevation="0"><v-icon>settings</v-icon></v-btn>
+        </v-chip>
+        <v-chip :color="nameColor" dark v-if="memberInfo.memberId === managingTeam.member.memberId">
+          <v-btn @click="teamManagement" icon elevation="0">팀 관리</v-btn>
+        </v-chip>
         <br>
         <p id ="nameColor"><b>
             게시물: {{myFeeds.length}} &nbsp;&nbsp; 
@@ -63,7 +68,7 @@ import { mapGetters } from "vuex";
 
 export default {
   computed:{
-    ...mapGetters(["memberInfo","feeds","myTeamList","team_challenging","myFeeds"])
+    ...mapGetters(["memberInfo","feeds","myTeamList","team_challenging","myFeeds", "managingTeam"])
     
   },
   created(){
@@ -97,7 +102,10 @@ export default {
     },
     check(){
       console.log(this.myFeeds);
-    }
+    },
+    teamManagement() {
+      this.$router.push("/teamManagement");
+    },
   }
 };
 </script>

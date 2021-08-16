@@ -57,7 +57,7 @@
               lg3
             >
               <v-card>
-                <v-card-title class="align-center justify-center subheading font-weight-bold" style="padding-bottom: 0px">
+                <v-card-title class="align-center justify-center subheading font-weight-bold" style="padding-bottom: 0px"  @click="sendMemberId(props.item.member)">
                   {{ props.item.member.name }} 님
                 </v-card-title>
                 <v-divider></v-divider>
@@ -120,9 +120,6 @@ export default {
     numberOfPages () {
       return Math.ceil(this.items.length / this.itemsPerPage)
     },
-    filteredKeys () {
-      return this.keys.filter(key => key !== 'Name')
-    },
   },
   mounted() {
     this.$nextTick(function() {
@@ -155,14 +152,13 @@ export default {
         }
       };
     },
-    nextPage () {
-      if (this.page + 1 <= this.numberOfPages) this.page += 1
-    },
-    formerPage () {
-      if (this.page - 1 >= 1) this.page -= 1
-    },
-    updateItemsPerPage (number) {
-      this.itemsPerPage = number
+    sendMemberId(member) {
+      // console.log("sendMemberId");
+      // console.log(member.email);
+      this.$store.dispatch("getMemberByEmail", member.email);
+      this.$store.dispatch("getYourFeeds", member.memberId);
+      //console.log(this.yourInfo);
+      this.$router.push("/memberdetail");
     },
   }
 };
