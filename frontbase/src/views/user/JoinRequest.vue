@@ -7,18 +7,6 @@
       </v-toolbar-title>
       <br><br><br><br>
     </v-layout>
-    <!-- <table v-if="waitingReqests.length !== 0">
-        <tr v-for="request in waitingReqests" v-bind:key="request.requestId" >
-            <td>{{request.member.name}}님의 가입요청</td>
-            <td><b-button variant="primary" v-on:click="acceptRequest(request.requestId, request.member.memberId)">수락</b-button></td>
-            <td><b-button variant="danger" v-on:click="rejectRequest(request.requestId)">거절</b-button></td>
-        </tr>
-    </table> -->
-    <!-- <table v-else>
-      <tr><b>
-        가입 요청이 존재하지 않습니다.
-      </b></tr>
-    </table> -->
     
     <template v-if="waitingReqests.length !== 0">
       <v-container style="padding-bottom: 0px;" fluid grid-list-md>
