@@ -52,7 +52,7 @@ import heart_b from "@/assets/images/heart_b.png";
 
 export default {
   created(){
-    this.newChallenges();
+    this.newChallenges;
   },
   computed: {
     ...mapGetters(["memberInfo", "entire_challenge"]),

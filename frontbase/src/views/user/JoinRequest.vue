@@ -43,7 +43,7 @@
                         width="40"
                         height="40"/>
                   </div>
-                  &nbsp;&nbsp;{{ props.item.member.name }} 님
+                  &nbsp;{{ props.item.member.name }} 님
                 </v-card-title>
                 <v-divider></v-divider>
                 <v-list dense>
