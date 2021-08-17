@@ -35,7 +35,7 @@
           <template v-slot:header>
             <v-toolbar
               dark
-              color="blue darken-3"
+              color="green darken-3"
               class="mb-1"
             >
               <v-text-field
@@ -84,7 +84,7 @@
 
     <template v-else>
       <b>
-        가입 요청이 존재하지 않습니다.
+        가입 요청이 존재하지 않습니다...
       </b>
     </template>
 
