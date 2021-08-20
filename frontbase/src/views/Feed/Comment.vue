@@ -1,6 +1,5 @@
 <template>
   <div class="wrap">
-    <h3>댓글창</h3>
     <div class="comments">
       <comment-item
         v-for="(comment, idx) in comments"
@@ -9,14 +8,20 @@
       ></comment-item>
     </div>
     <div class="writeC">
-      <label for="writeC">댓글작성</label>
-      <input type="text" id="writeC" v-model="inputC" />
-      <v-btn @click="writeComment">작성</v-btn>
+      <input
+        type="text"
+        id="writeC"
+        v-model="inputC"
+        placeholder="댓글달기..."
+        @keyup.enter="writeComment()"
+      />
+      <div @click="writeComment" class="writeC_btn">작성</div>
     </div>
   </div>
 </template>
 <script>
-import { createInstance } from "@/api/index.js";
+import "../../components/css/feed/comment.scss";
+import { createInstance } from "@/api/teamindex.js";
 import CommentItem from "@/views/Feed/CommentItem.vue";
 import { mapGetters } from "vuex";
 
@@ -49,11 +54,9 @@ export default {
         .post("/comment/", JSON.stringify(body))
         .then(response => {
           if (response.data.data === "success") {
-            // document.querySelector("#writeC").value = "";
-            alert("댓글 등록 완료");
+            this.inputC = "";
             this.$store.dispatch("GET_COMMENTS", this.feedid);
           } else {
-            alert("댓글 등록 실패");
           }
         })
         .catch();
@@ -61,21 +64,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-h3 {
-  text-align: center;
-}
-.comments {
-  margin: 0 auto;
-  background: lavender;
-  padding: 15px;
-}
-.writeC {
-  width: 80%;
-  margin: 2em auto 0;
-}
-.writeC input {
-  border: 1px solid black;
-}
-</style>

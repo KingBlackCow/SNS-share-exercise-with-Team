@@ -57,6 +57,7 @@
             background-color="transparent"
             v-model="member.password"
             label="비밀번호"
+            @keydown.enter="confirm"
           ></v-text-field>
         </form>
 
@@ -77,6 +78,26 @@
             >회원가입</v-btn
           >
         </v-card-actions>
+        <v-card hover>
+          <img
+            src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
+            width="250"
+            height="50"
+            hover
+            @click="loginWithKakao"
+          />
+        </v-card>
+
+        <GoogleLogin :params="params" :renderParams="renderParams" :onSuccess="onSuccess" :onFailure="onFailure"></GoogleLogin>
+
+        <v-card hover>
+          <img 
+            height="50" 
+            @click="naverLogin" 
+            src='@/assets/images/naverid.png'
+          />
+        </v-card>
+        
 
         <v-card-actions class="hidden-md-and-up justify-center">
         </v-card-actions>
@@ -90,30 +111,38 @@ import { VueTyper } from "vue-typer";
 import { login } from "@/api/user.js";
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
-
 import VueCompareImage from "vue-compare-image";
 import banner1 from "@/assets/images/banner1.jpg";
 import banner2 from "@/assets/images/banner2.jpg";
 import banner3 from "@/assets/images/banner3.jpg";
 import banner4 from "@/assets/images/banner4.jpg";
-
+import GoogleLogin from 'vue-google-login';
+import naverid from "@/assets/images/naverid.png";
+import { createInstance, url } from "@/api/teamindex.js";
 export default {
   components: {
     "vue-typer": VueTyper,
-    VueCompareImage
+    VueCompareImage,
+    GoogleLogin,
+    naverid,
   },
   computed: {
     ...mapGetters(["memberInfo"])
   },
+  created(){
+    this.naverimgsrc=naverid
+  },
+  
   data() {
     return {
+      naverimgsrc:"",
       member: {
         email: "",
         password: ""
       },
       isLoginError: false,
       client_id: "916d7a1087ccb6494372f576d3911baf",
-      redirect_uri: "http://localhost:8080",
+      redirect_uri: url,
       icons: [
         { href: "https://github.com/EldinZaimovic", icon: "fab fa-github" },
         {
@@ -142,7 +171,17 @@ export default {
       rightImage2: banner4,
       sliderLine: 0,
       hSize: 0,
-      sliderPosition: 0.5
+      sliderPosition: 0.5,
+      params: {
+        client_id: "1011124741177-02ief3em5ve5bj13s93nvvq33dd7et9v.apps.googleusercontent.com",
+        ux_mode: "popup",
+        redirect_uri: "http://localhost:8081/",
+      },
+      renderParams: {
+          width: 250,
+          height: 50,
+          longtitle: true
+      }
     };
   },
   methods: {
@@ -159,25 +198,53 @@ export default {
             localStorage.setItem("access-token", token);
             console.log(token);
             this.$store.dispatch("GET_MEMBER_INFO", token);
-            this.$router.push("/feed");
+            this.$router.push("/teamlist");
           } else {
             this.isLoginError = true;
           }
         },
         error => {
           console.error(error);
-          alert("에러입니다.");
+          alert("이메일이나 비밀번호를 잘못 입력하셨습니다.");
         }
       );
     },
-    onSuccess() {
-      console.log("success");
-      this.$store.commit("setMemberInfo", true);
-      this.$router.push("/");
+    onSuccess(googleUser) {
+      const instance = createInstance();
+      instance
+        .get("/member/google?email=" + googleUser.getBasicProfile().Et)
+        .then(response => {
+          console.log(response);
+          if(response.data.data == null){
+            this.$router.push("/kakaosignup?email=" + googleUser.getBasicProfile().Et);
+          }
+          else{
+            this.member.email = response.data.data.email;
+            this.member.password = response.data.data.password;
+
+            this.confirm();
+          }
+        })
     },
-    onFailure() {
-      console.log("failure");
-      this.$router.push("/");
+    onFailure(){
+
+    },
+    
+    loginWithKakao(){
+      window.location.replace(
+        `https://kauth.kakao.com/oauth/authorize?client_id=35246c4d76c9d177b219aeeb8d0f2579&redirect_uri=http://i5c105.p.ssafy.io/kakaosignup&response_type=code`
+      );
+    },
+    naverLogin(){
+      const instance = createInstance();
+      instance.get("/member/naverlogin")
+          .then(response => {
+            console.log(response.data);
+            window.location.href=response.data;
+              
+          }).catch(error =>{
+            console.log(error);
+      })
     }
   },
   computed: {

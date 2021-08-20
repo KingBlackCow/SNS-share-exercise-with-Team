@@ -12,19 +12,7 @@
         v-for="project in projects"
         :key="project.title"
       >
-        <template v-slot:activator="{ on }">
-          <v-flex xs12 sm6 md4 lg4 xl4 v-on="on">
-            <v-card hover flat color="transparent">
-              <v-img
-                :src="project.poster"
-                :alt="project.title"
-                height="230"
-                lazy-src="https://cdn.dribbble.com/users/503653/screenshots/3143656/fluid-loader.gif"
-              ></v-img>
-              <v-card-title primary-title class="justify-center">{{project.title}}</v-card-title>
-            </v-card>
-          </v-flex>
-        </template>
+        
         <v-card v-if="project.dialog">
           <v-img :src="project.poster"></v-img>
           <v-card-text>
@@ -52,32 +40,6 @@
 
 <script>
 export default {
-  metaInfo: {
-    title: "Web Portfolio",
-    titleTemplate: "%s ← Eldin's Space",
-    meta: [
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      {
-        name: "description",
-        content:
-          "Eldin Zaimovic's Web Portfolio Vue Vue.js Nuxt Nuxt.js HTML CSS Vuetify Axios GraphQL JavaScript Web Developer Front-End Frontend Designer App Responsive"
-      },
-      { charset: "utf-8" },
-      { property: "og:title", content: "Eldin' Space" },
-      { property: "og:site_name", content: "Eldin' Space" },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://eldin.space" },
-      {
-        property: "og:image",
-        content: "https://i.imgur.com/Dcz2PGx.jpg"
-      },
-      {
-        property: "og:description",
-        content:
-          "Eldin Zaimovic's Web Portfolio Vue Vue.js Nuxt Nuxt.js HTML CSS Vuetify Axios GraphQL JavaScript Web Developer Front-End Frontend Designer App Responsive"
-      }
-    ]
-  },
   data() {
     return {
       dialog: false,

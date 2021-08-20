@@ -3,6 +3,7 @@ package com.web.curation.request;
 import java.util.List;
 import javax.persistence.EntityManager;
 
+import com.web.curation.model.BasicResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +26,9 @@ public class RequestController {
     @ApiResponses(value = {@ApiResponse(code = 201, message = "팀 가입요청이 생성됨"),
     						@ApiResponse(code = 409, message = "이미 요청한 적이 있음")})
     public Object sendRequest(@RequestBody RequestDto requestDto) {
-    	if(!requestService.checkDuplication(requestDto)) {
-    		requestService.makeRequest(requestDto);
-    		return new ResponseEntity<>(HttpStatus.CREATED);
-    	}
-    	return new ResponseEntity<>(HttpStatus.CONFLICT);
+        requestService.makeRequest(requestDto);
+        System.out.println(requestDto.getMember().getMemberId());
+    	return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{teamId}")
@@ -37,7 +36,7 @@ public class RequestController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "팀별 가입요청 리스트", response = Request.class, responseContainer = "List")})
     public Object getRequestList(@PathVariable int teamId) {
     	List<RequestDto> list = requestService.getRequestList(teamId);
-    	
+
     	return new ResponseEntity<>(list, HttpStatus.OK);
     }
     
@@ -46,8 +45,10 @@ public class RequestController {
     @ApiResponses(value = {@ApiResponse(code = 202, message = "가입요청 수락됨")})
     public Object acceptRequest(@PathVariable int requestId) {
     	requestService.acceptRequest(requestId);
-    	
-    	return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        final BasicResponse result = new BasicResponse();
+        result.status = true;
+        result.data = "success";
+    	return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
     }
     
     @PutMapping("/reject/{requestId}")
@@ -55,7 +56,9 @@ public class RequestController {
     @ApiResponses(value = {@ApiResponse(code = 202, message = "가입요청 거절됨")})
     public Object rejectRequest(@PathVariable int requestId) {
     	requestService.rejectRequest(requestId);
-    	
-    	return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        final BasicResponse result = new BasicResponse();
+        result.status = true;
+        result.data = "success";
+    	return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
     }
 }
