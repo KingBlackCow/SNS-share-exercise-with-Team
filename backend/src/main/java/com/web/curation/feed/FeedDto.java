@@ -1,13 +1,14 @@
 package com.web.curation.feed;
 
+import com.web.curation.files.PhotoDto;
+import com.web.curation.member.Member;
+import com.web.curation.team.Team;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -38,7 +39,11 @@ public class FeedDto {
 
     @ApiModelProperty(required = true)
     private String writer;
-
-    @ApiModelProperty(required = true)
+    
     private MultipartFile image;
+
+    private List<PhotoDto> photos;
+
+    private Member member;
+    private Team team;
 }

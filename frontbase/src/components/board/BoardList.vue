@@ -24,11 +24,12 @@
                 </b-input-group>
             </b-col>
             <b-col class="text-right">
-                <b-button pill class="btn-main" @click="movePage">글쓰기</b-button>
+                <b-button pill class="btn-main" @click="check()">글쓰기</b-button>
             </b-col>
         </b-row>
-        <div v-if="noticeItems.length" class="text-center">
+        <div v-if="noticeItems" class="text-center">
             <b-table
+                style="cursor:pointer;"
                 hover
                 id="list_table"
                 :items="filtered"
@@ -58,6 +59,7 @@
 import { mapGetters } from "vuex";
 import ListRow from "@/components/board/include/ListRow.vue";
 import TeamHeader from '@/components/TeamHeader.vue';
+import moment from 'moment';
 
 export default {
   name: "board",
@@ -88,7 +90,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(["noticeItems","selectTeam"]),
+        ...mapGetters(["noticeItems","selectTeam","memberInfo"]),
         filtered: function () {
             var stitle = this.word.trim();
             return this.noticeItems.filter(function (item) {
@@ -102,7 +104,8 @@ export default {
         },
     },
     created() {
-      console.log(this.selectTeam.teamId);
+        console.log(this.selectTeam);
+        console.log(this.memberInfo.memberId);
         this.$store.dispatch("getNoticeItems",this.selectTeam.teamId);
     },
     methods: {
@@ -120,9 +123,9 @@ export default {
             // console.log(e);
             this.$router.push(`/board/view?boardId=` + e.boardId);
         },
-        // getFormatDate(regtime) {
-        //     return moment(new Date(regtime)).format("YYYY.MM.DD");
-        // },
+        getFormatDate(regtime) {
+            return moment(new Date(regtime)).format("YYYY년 MM월 DD일");
+        },
 
         moveMain(){
           this.$router.push("/teammain");
@@ -138,6 +141,13 @@ export default {
         },
         moveTeamFeed(){
           this.$router.push("/teamFeed");
+        },
+        check(){
+            if(this.memberInfo.memberId !== this.selectTeam.memberId){
+                alert("팀 임원이 아닙니다.");
+            }else{
+                this.movePage();
+            }
         }
     },
   // methods: {

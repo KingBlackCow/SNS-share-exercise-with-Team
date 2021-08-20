@@ -13,6 +13,12 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/antd.css';
+import AOS from 'aos';
+import "aos/dist/aos.css";
+
+
 library.add(faUserSecret)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
@@ -25,6 +31,8 @@ const isProd = process.env.NODE_ENV === "production"
 Vue.use(Vuetify);
 Vue.use(Vuetify2);
 Vue.use(IconsPlugin);
+Vue.use(Antd);
+
 new Vue({
   router,
   store,
@@ -33,6 +41,9 @@ new Vue({
     if (store.state.memberInfo == null && token) {
       await store.dispatch("GET_MEMBER_INFO", token);
     }
+  },
+  created() {
+    AOS.init();
   },
   render: h => h(App),
 }).$mount('#app')

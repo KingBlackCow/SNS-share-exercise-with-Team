@@ -1,12 +1,14 @@
 <template>
   <v-container grid-list-xl>
+   
+      <v-layout align-center data-aos="fade-right">
+        <v-toolbar-title class="headline">
+            <span><b>달성</b></span>
+            <span class="green--text"><b>&nbsp;기록</b></span>
+        </v-toolbar-title>
+        <br><br><br><br>
+      </v-layout>
     <v-layout row justify-center align-center wrap class="mt-4 pt-2">
-      <v-flex xs12 sm12 md12 lg12 xl12>
-        <h2 class="pl-4">
-          <span><b>공통</b></span>
-          <span class="green--text"><b>&nbsp;챌린지</b></span>
-        </h2>
-      </v-flex>
       <v-flex v-for="(challenge,idx) in newChallenges" :key=idx xs6 sm3 md3 lg3 xl3>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -39,20 +41,19 @@ import feed from "@/assets/images/feed.png";
 import team from "@/assets/images/team.png";
 import point from "@/assets/images/point.png";
 import security from "@/assets/images/security.png";
-import heart from "@/assets/images/heart.png";
 import attendance_b from "@/assets/images/attendance_b.png";
 import comment_b from "@/assets/images/comment_b.png";
 import feed_b from "@/assets/images/feed_b.png";
 import team_b from "@/assets/images/team_b.png";
 import point_b from "@/assets/images/point_b.png";
 import security_b from "@/assets/images/security_b.png";
-import heart_b from "@/assets/images/heart_b.png";
 
 export default {
+  created(){
+  },
   computed: {
     ...mapGetters(["memberInfo", "entire_challenge"]),
-
-    newChallenges: function () {
+    newChallenges() {
       if(this.entire_challenge.data.attendance < 30) {
         this.challenges[0].src = attendance_b
       } else {
@@ -89,7 +90,8 @@ export default {
         this.challenges[5].src = security
       }
       return this.challenges
-    },
+    }
+    
   },
   data() {
     return {
@@ -124,14 +126,11 @@ export default {
           title: "궁극의 기억력",
           introduction: "비밀번호 10 자리 이상 충족",
         },
-        {
-          src: heart_b,
-          src_b: heart,
-          title: "하트가 뿜뿜",
-          introduction: "하트 50 개 달성",
-        },
       ]
     };
+  },
+  methods(){
+    
   }
 };
 </script>

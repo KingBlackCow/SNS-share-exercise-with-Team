@@ -1,7 +1,8 @@
 <template>
-  <div class="wrap">
-    <div>{{ inner.member.name }}</div>
-    <div class="contents">{{ inner.contents }}</div>
+  <div class="mini_wrap">
+    <img v-bind:src="inner.member.photo.filePath" class="mini_profile" />
+    <div class="mini_writer">{{ inner.member.name }}</div>
+    <div class="mini_contents">{{ inner.contents }}</div>
   </div>
 </template>
 
@@ -10,16 +11,9 @@ export default {
   props: ["inner"],
   data: () => {
     return {};
+  },
+  created() {
+    console.log(this.inner);
   }
 };
 </script>
-
-<style scoped>
-.wrap {
-  display: flex;
-}
-.contents {
-  margin-left: 10px;
-  font-weight: 700;
-}
-</style>

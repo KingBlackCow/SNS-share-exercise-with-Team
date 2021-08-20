@@ -4,9 +4,9 @@
       <v-flex xs12 sm12 md6 lg6 xl6>
         <h2 class="pb-4 mb-4">
           <span>Sign</span>
-          <span class="blue--text">Up</span>
+          <span class="green--text">Up</span>
         </h2>
-
+        
         <form>
           <v-text-field
             name="member.name"
@@ -15,28 +15,38 @@
             v-model="member.name"
             :error-messages="nameErrors"
             label="이름"
+            
             required
           ></v-text-field>
-          <v-text-field
-            type="email"
-            color="green"
-            background-color="transparent"
-            name="member.email"
-            v-model="member.email"
-            :error-messages="emailErrors"
-            label="E-mail"
-          ></v-text-field>
+          
+          <v-layout row wrap justify-center align-center>
+            <v-text-field id ="nowrap-overflow"
+              type="email"
+              color="green"
+              background-color="transparent"
+              name="member.email"
+              v-model="member.email"
+              :error-messages="emailErrors"
+              label="E-mail"
+            ></v-text-field>
+          <v-btn @click="authentic()" color="green" class="white--text">인증하기</v-btn>
+          <div class="timer" v-if="resetButton">
+            <span class="minute">{{ minutes }}</span>
+            <span>:</span>
+            <span class="seconds">{{ seconds }}</span>
+          </div>
+          </v-layout>
 
-          <v-btn @click="authentic()">인증</v-btn>
-
-          <v-text-field
-            name="num"
-            color="green"
-            background-color="transparent"
-            v-model="num"
-            label="인증번호"
-          ></v-text-field>
-          <v-btn @click="certify()">확인</v-btn>
+          <v-layout row wrap>
+            <v-text-field
+              name="num"
+              color="green"
+              background-color="transparent"
+              v-model="num"
+              label="인증번호"
+            ></v-text-field>
+            <v-btn @click="certify()" elevation="0" color="green" class="white--text">확인하기</v-btn>
+          </v-layout>
 
           <v-text-field
             name="member.phone"
@@ -119,7 +129,9 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import { createInstance } from "@/api/index.js";
+import { createInstance } from "@/api/teamindex.js";
+import Countdown from 'vuejs-countdown';
+
 import {
   required,
   maxLength,
@@ -133,6 +145,9 @@ export default {
     email: { required, email },
     body: { required, minLength: minLength(20) },
   },
+  components: { 
+    Countdown,
+  },
   data() {
     return {
       num:"",
@@ -142,6 +157,8 @@ export default {
         { name: "남자", value: "M" },
         { name: "여자", value: "W" },
       ],
+      resTimeData : '',
+
       mbtiList: [
         { name: "istj", value: "istj" },
         { name: "isfj", value: "isfj" },
@@ -154,6 +171,7 @@ export default {
         { name: "estp", value: "estp" },
         { name: "esfp", value: "esfp" },
         { name: "entp", value: "entp" },
+        { name: "enfp", value: "enfp" },
         { name: "estj", value: "estj" },
         { name: "esfj", value: "esfj" },
         { name: "enfj", value: "enfj" },
@@ -181,6 +199,11 @@ export default {
       error: {
         passwordConfirm: false,
       },
+      timer: null,
+      totalTime: (5 * 60),
+      resetButton: false,
+      title: "Countdown to rest time!",
+      edit: false
     };
   },
   watch: {
@@ -189,6 +212,18 @@ export default {
     }
   },
   methods: {
+    loadf() {
+      var file = document.getElementById("chooseFile");
+
+      let preview = document.querySelector(".preview");
+      preview.src = URL.createObjectURL(file.files[0]);
+
+      // console.log(file.files[0]);
+
+      preview.style.width = "60%";
+      preview.style.height = "60%";
+      preview.style.maxHeight = "500px";
+    },
     submit() {
       if(!this.authenticFlag){
         alert("인증먼저해주세요");
@@ -219,6 +254,12 @@ export default {
       this.$v.$reset();
       this.member.name = "";
       this.member.email = "";
+      this.passwordConfirm="";
+      this.member.password="";
+      this.member.phone="";
+      this.member.address="";
+      this.member.addressDetail="";
+      this.member.zonecode="";
     },
     showApi() {
       new window.daum.Postcode({
@@ -258,6 +299,7 @@ export default {
       this.isSubmit = isSubmit;
     },
     authentic(){
+      this.startTimer();
       const instance = createInstance();
       instance.post("/email/send?"+"member_email="+this.member.email)
         .then(
@@ -294,7 +336,31 @@ export default {
     },
     check(){
       console.log(this.authenticFlag);
-    }
+    },
+    startTimer: function() {
+      this.timer = setInterval(() => this.countdown(), 1000); //1000ms = 1 second
+      this.resetButton = true;
+    },
+    stopTimer: function() {
+      clearInterval(this.timer);
+      this.timer = null;
+      this.resetButton = true;
+    },
+    resetTimer: function() {
+      this.totalTime = (5 * 60);
+      clearInterval(this.timer);
+      this.timer = null;
+      this.resetButton = false;
+    },
+    editTimer: function() {
+      this.edit = true;
+    },
+    padTime: function(time){
+      return (time < 10 ? '0' : '') + time;
+    },
+    countdown: function() {
+      this.totalTime--;
+    },
   },
   computed: {
     nameErrors() {
@@ -320,9 +386,32 @@ export default {
     //   !this.$v.body.required && errors.push("Text is required");
     //   return errors;
     // },
+    minutes: function(){
+      const minutes = Math.floor(this.totalTime / 60);
+      return this.padTime(minutes);
+    },
+    seconds: function() {
+      const seconds = this.totalTime - (this.minutes * 60);
+      return this.padTime(seconds);
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.nowrap-overflow {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+.img_wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.preview {
+  display: block;
+  margin: 20px 0;
+}
+
 </style>

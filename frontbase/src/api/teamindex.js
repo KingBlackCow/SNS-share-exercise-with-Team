@@ -1,14 +1,18 @@
 import axios from "axios";
-//import { API_BASE_URL } from "../config";
-//import http from '@/util/http-common';
+import store from "@/store/index";
+
+//let url = "http://localhost:8080";
+let url= "http://i5c105.p.ssafy.io/api";
 function createInstance() {
   const instance = axios.create({
-    baseURL: "http://localhost:8080",
+    baseURL: url,
+    
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "access-token":store.state.token,
     }
   });
   return instance;
 }
 
-export { createInstance };
+export { createInstance, url};

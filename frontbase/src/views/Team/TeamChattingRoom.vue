@@ -10,20 +10,44 @@
             </v-bottom-navigation>
         </v-layout>
         
-        <h1>{{title}}</h1>
+        <v-layout align-center data-aos="fade-right">
+            <v-toolbar-title class="headline">
+                <span><b>채팅방</b></span>
+            </v-toolbar-title>
+            <br><br><br><br>
+        </v-layout>
         <hr />
         <div v-for="(m, idx) in msg" :key="idx">
             <div v-bind:class="m.style">
-                <h5 style="margin:3px">
-                    {{m.senderNickname}}
-                    </h5>
-                {{m.content}}
-                {{m.writeDate}}
+                <div v-if="m.style == 'otherMsg'" class="entete">
+                    <span style="margin:3px;font-size:15px">
+                    {{ m.senderNickname }}
+                    </span>
+                    <br>
+                    <span class="content">
+                        {{m.content}}
+                    </span>
+                    &nbsp;
+                    <span class="date">
+                        {{m.writeDate.slice(11, 16)}}
+                    </span>
+                </div>
+                <div v-else class="entete">
+                    <span class="date">
+                        {{m.writeDate.slice(11, 16)}}
+                    </span>
+                    &nbsp;
+                    <span class="content">
+                        {{m.content}}
+                    </span>
+                </div>
             </div>
         </div>
         <hr />
-        <input type="text" v-model="content" placeholder="보낼 메시지" size="100" />
+        <v-layout justify-center align-center wrap class="mt-4 pt-2">
+        <input type="text" style="width:240px;" @keyup.enter="sendMessage()" v-model="content" placeholder="보낼 메시지" size="100" />
         <button @click="sendMessage()"> SEND</button>  
+        </v-layout>
     </div>
 </template>
 
@@ -31,7 +55,7 @@
 import TeamHeader from '@/components/TeamHeader.vue';
 import Stomp from 'webstomp-client'
 import SockJS from 'sockjs-client'
-import http from "@/util/http-common";
+import { createInstance, url} from "@/api/teamindex.js";
 import { mapState} from "vuex";
 
 export default {
@@ -55,13 +79,13 @@ export default {
             }
     },
     created(){
-        console.log(this.memberInfo)
-        console.log(this.selectTeam)
+        const instance = createInstance();
 
-        //채팅방 내용 불러오기
-        http
+        instance
             .get('/message/'+this.selectTeam.teamId+'?page=0', )
             .then(res=>{
+                console.log(res);
+
                 this.msg = []
                 let resMsg = res.data.data;
                 for(let i=resMsg.length-1; i>-1; i--){
@@ -72,21 +96,20 @@ export default {
                         'writeDate': resMsg[i].writeDate
                     }
                     this.msg.push(m)
+                    if(this.msg.length>10){
+                        this.msg.shift();
+                    }
                 }
-
-                console.log(this.msg);
             }, err=>{
                 console.log(err)
                 alert("error : 새로고침하세요")
             })
 
-        // socket 연결
-        let socket = new SockJS('http://localhost:8080/ws')
+        let socket = new SockJS(url+'/ws')
         this.stompClient = Stomp.over(socket)
         this.stompClient.connect({}, frame=>{
             console.log("success", frame)
             this.stompClient.subscribe("/sub/"+this.selectTeam.teamId, res=>{
-                console.log("aa");
                 let jsonBody = JSON.parse(res.body)
                 let m={
                     'senderNickname':jsonBody.writer,
@@ -95,6 +118,9 @@ export default {
                     'writeDate': jsonBody.writeDate
                 }
                 this.msg.push(m)
+                if(this.msg.length>10){
+                    this.msg.shift();
+                }
             })
         }, err=>{
             console.log("fail", err)
@@ -121,9 +147,27 @@ export default {
 <style scoped>
 .myMsg{
 text-align: right;
-color : gray;
 }
 .otherMsg{
     text-align: left;
+}
+.content{
+    font-size: 15;
+    margin:5px;
+    padding:10px;
+    color:#fff;
+    line-height:25px;
+    max-width:90%;
+    display:inline-block;
+    text-align:left;
+    border-radius:5px;
+    background-color:#58b666;
+    width: auto;
+}
+.date{
+    font-size: 13px;
+}
+.entete {
+    margin-bottom:5px;
 }
 </style>

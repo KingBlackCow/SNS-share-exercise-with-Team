@@ -2,12 +2,30 @@
   <v-container grid-list-xl>
     <v-layout row justify-center align-center wrap class="mt-4 pt-2">
       <v-flex xs12 sm12 md6 lg6 xl6>
-        <h2 class="pb-4 mb-4">
-          <span>Team</span>
-          <span class="green--text">Create</span>
-        </h2>
+        <v-layout align-center data-aos="fade-right">
+          <v-toolbar-title class="headline">
+              <span><b>팀</b></span>
+              <span class="green--text"><b>&nbsp;생성</b></span>
+          </v-toolbar-title>
+          <br><br><br><br>
+        </v-layout>
 
         <form>
+          <div class="img_wrap">
+            <v-btn color="green"
+            class="white--text"><label for="chooseFile">
+              팀 썸네일 이미지
+            </label></v-btn>
+            <input
+              type="file"
+              id="chooseFile"
+              name="chooseFile"
+              accept="image/*"
+              @change="loadf"
+            />
+            <img src="" class="preview" />
+          </div>
+
           <v-text-field
             name="team.name"
             color="green"
@@ -19,7 +37,7 @@
           <v-btn
             @click="duplicateName"
             type="button"
-            color="blue"
+            color="green"
             class="white--text duplicate"
           >
             중복검사
@@ -42,20 +60,6 @@
             label="팀소개"
           ></v-text-field>
 
-          <div class="img_wrap">
-            <label for="chooseFile" class="fileBtn">
-              팀 썸네일
-            </label>
-            <input
-              type="file"
-              id="chooseFile"
-              name="chooseFile"
-              accept="image/*"
-              @change="loadf"
-            />
-            <img src="" class="preview" />
-          </div>
-          
           <br>
           <div class="buttons">
             <v-btn
@@ -109,16 +113,11 @@ export default {
 
       let preview = document.querySelector(".preview");
       preview.src = URL.createObjectURL(file.files[0]);
-
-      // console.log(file.files[0]);
-
       preview.style.width = "60%";
       preview.style.height = "60%";
       preview.style.maxHeight = "500px";
     },
     submit() {
-      // this.team.sportDto.sportId = this.team.sport.value;
-      // this.team.member.memberId = this.memberInfo.memberId;
       this.team.leader = this.memberInfo.name
       this.team.member.memberId = this.memberInfo.memberId
       this.team.sportDto.sportId = this.team.sport.value
@@ -147,13 +146,15 @@ export default {
       instance
         .post("/team", formData, {
           Headers: {
-            "Content-Type": "multiart/form-data"
+            "Content-Type": "multipart/form-data"
           }
         })
         .then(response => {
           if (response.data.data === "success") {
             alert("팀생성완료 완료");
-            this.$router.push("/teamlist");
+            this.$store.dispatch("GET_MY_TEAM_INFO", this.memberInfo.memberId);
+            this.$store.dispatch("GET_MANAGE_TEAM", this.memberInfo.memberId);
+            this.$router.push("/feed");
           } else {
             alert("팀생성 실패");
           }
@@ -163,9 +164,8 @@ export default {
         });
     },
     clear() {
-      this.$v.$reset();
-      this.team.name = null;
-      this.team.introduction = null;
+      this.team.name = "";
+      this.team.introduction = "";
     },
     duplicateName() {
       const instance = createInstance();
@@ -174,7 +174,6 @@ export default {
           alert("이미 사용된 팀명입니다!");
         } else {
           alert("사용가능한 팀명입니다!");
-          // console.log(this.memberInfo)
         }
       });
     },

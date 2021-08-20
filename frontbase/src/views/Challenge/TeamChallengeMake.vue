@@ -34,10 +34,13 @@
       </v-bottom-navigation>
     </v-layout>
     <br>
-    <h2 class="pl-4">
-      <span>챌린지 </span>
-      <span class="green--text">등록하기</span>
-    </h2>
+    <v-layout justify-center align-center data-aos="fade-right">
+      <v-toolbar-title class="headline">
+          <span><b>챌린지</b></span>
+          <span class="green--text"><b>&nbsp;등록하기</b></span>
+      </v-toolbar-title>
+      <br><br><br><br>
+    </v-layout>
     <v-layout row justify-center align-center wrap class="mt-4 pt-2">
       <form>
           <v-text-field
@@ -59,15 +62,13 @@
 
           <date-picker v-model="challenge.date" range></date-picker>
       </form>
-          
-          
-    
-
-
     </v-layout>
-    <v-btn flat large dark color="black" target="_blank" @click="enroll()">
+    <v-layout justify-center align-center data-aos="fade-top">
+    <v-btn flat large dark color="black" target="_blank" @click="enroll()" :disabled="this.memberInfo.memberId !== this.selectTeam.memberId">
         등록하기
     </v-btn>
+          </v-layout>
+
   </v-container>
 </template>
 
@@ -75,7 +76,8 @@
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 import { mapState } from 'vuex';
-import { createInstance } from "@/api/index.js";
+import { createInstance } from "@/api/teamindex.js";
+
 
 export default {
   components:{
@@ -97,16 +99,22 @@ export default {
   
   methods: {
       check(){
-        console.log(this.team_challenges);
         alert(this.team_challenges);
       },
       enroll() {
+        var today = new Date();   
+        var start = new Date(this.challenge.date[0]);
+        
+        if(today>start){
+          alert("오늘이나 이전날짜에는 등록할 수 없습니다.");
+          return;
+        }
         let start_date = JSON.stringify(this.challenge.date[0]).replaceAll('"', "");
         let end_date = JSON.stringify(this.challenge.date[1]).replaceAll('"', "");
         start_date = start_date.replaceAll('\\', "");
         end_date = end_date.replaceAll('\\',"");
         const instance = createInstance();
-
+        
         const body = {
           "contents":this.challenge.contents,
           "endDate":end_date,
@@ -115,7 +123,6 @@ export default {
           "teamId": this.selectTeam.teamId,
           "title": this.challenge.title
         }; 
-        console.log(JSON.stringify(body));
         instance.post("/team_challenge_enroll", JSON.stringify(body))
         .then(
           (response) => {
@@ -129,6 +136,7 @@ export default {
           }
         )
         .catch();
+
       },
       
       moveMain(){

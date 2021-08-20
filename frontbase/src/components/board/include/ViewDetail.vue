@@ -15,9 +15,9 @@
             <div class="text-center mb-3" v-if="boardtype == 'notice'">
                 <b-col class="text-right mt-5">
                     <router-link :to="'/board/modify?boardId=' + boardId"
-                        ><b-button size="sm" class="m-1">수정</b-button></router-link
+                        ><b-button size="sm" class="m-1" :disabled="this.memberInfo.memberId !== this.selectTeam.memberId">수정</b-button></router-link
                     >
-                    <b-button variant="outline-danger" size="sm" class="m-1" @click="deleteBoard"
+                    <b-button variant="outline-danger" size="sm" class="m-1" @click="deleteBoard" :disabled="this.memberInfo.memberId !== this.selectTeam.memberId"
                         >삭제</b-button
                     >
                 </b-col>
@@ -29,15 +29,15 @@
                 <col style="width: 20%" />
             </colgroup>
             <tr>
-                <th colspan="3" class="text-center view-title">{{ title }}</th>
+                <th colspan="3" class="text-center view-title" style="color:green">{{ title }}</th>
             </tr>
             <tr>
-                <th>게시자</th>
-                <td>{{ writer }}</td>
-                <td>{{ writeDate}}</td>
+                <th style="color:green">게시자</th>
+                <td style="color:green">{{ writer }}</td>
+                <td style="color:green">{{ getFormatDate(writeDate) }}</td>
             </tr>
             <tr>
-                <td colspan="3" class="content-row" v-html="enterToBr(contents)"></td>
+                <td colspan="3" class="content-row" v-html="enterToBr(contents)" style="color:green"></td>
             </tr>
         </table>
         <hr />
@@ -54,13 +54,18 @@
 
 <script>
 import { mapGetters } from "vuex";
-import http from "@/util/http-common";
+// import http from "@/util/http-common";
+import { createInstance } from "@/api/teamindex.js";
 import TeamHeader from '@/components/TeamHeader.vue';
+import moment from 'moment';
 
 export default {
   name: "viewdetail",
   components: {
     TeamHeader
+  },
+  computed:{
+    ...mapGetters(["selectTeam","memberInfo"]),
   },
   props: {
         boardtype: { type: String },
@@ -71,9 +76,13 @@ export default {
         writeDate: { type: String }
     },
   methods: {
+    getFormatDate(writeDate) {
+      return moment(new Date(writeDate)).format('YYYY년MM월DD일 HH시 mm분');
+    },
    deleteBoard() {
+            const instance = createInstance();
             if (confirm("삭제하시겠습니까?")) {
-                    http.delete(`/board/${this.boardId}`).then(({ data }) => {
+                    instance.delete(`/board/${this.boardId}`).then(({ data }) => {
                         let msg = "삭제 처리시 문제가 발생했습니다.";
                         if (data.data === "success") {
                             msg = "삭제가 완료되었습니다.";
