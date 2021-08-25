@@ -30,7 +30,6 @@
 
 ### 💻Back-End
 
-- **담당자** : 최준오, 양동현, 이호황
 <details>
     <summary>Back 자세히 살펴보기 🔥</summary>
     <ul>
@@ -58,7 +57,6 @@
 ### ✨Front-End / Android
 
 - **지원 환경** : Web / Mobile 
-- **담당자** : 진해진, 차범희, 이조순
 <details>
     <summary>Front 자세히 살펴보기 🌈</summary>
     <ul>
